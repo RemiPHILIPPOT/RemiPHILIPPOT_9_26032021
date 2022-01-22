@@ -55,8 +55,8 @@ describe("Given I am connected as an employee", () => {
       // Routing variable
       const pathname = ROUTES_PATH["Bills"];
       //We recover a copy of the mocked data
-      jest.mock("../app/Firestore");
-      Firestore.bills = () => ({ bills, get: jest.fn().mockResolvedValue() });
+      jest.mock("../app/Store");
+      store.bills = () => ({ bills, get: jest.fn().mockResolvedValue() });
 
       // Define pathname : #employee/bills
       location.assign(pathname);
@@ -112,7 +112,7 @@ describe("Given I am connected as an employee", () => {
       const bills = new Bills({
         document,
         onNavigate,
-        Firestore,
+        Store,
         localStorage: window.localStorage,
       });
 
@@ -151,13 +151,13 @@ describe("Given I am connected as an employee", () => {
        */
       constructBillsUi();
       // Init firestore
-      const firestore = null;
+      const store = null;
 
       // init Bills Class constructor for icon eye display
       const bills = new Bills({
         document,
         onNavigate,
-        firestore,
+        store,
         localStorage: window.localStorage,
       });
 
@@ -191,10 +191,10 @@ describe("Given I am connected as an employee", () => {
       //Data lier au fichier firebase se trouvant dans le repertoire __mock__
 
       // Spy on Firebase Mock
-      const getSpy = jest.spyOn(firebase, "get");
+      const getSpy = jest.spyOn(store, "get");
 
       // Get bills
-      const bills = await firebase.get();
+      const bills = await store.get();
 
       expect(getSpy).toHaveBeenCalledTimes(1);
       //check if result as equal to four
@@ -202,7 +202,7 @@ describe("Given I am connected as an employee", () => {
     });
 
     test("Then add a new bills, if API fails with 404 message error", async () => {
-      firebase.get.mockImplementationOnce(() =>
+      store.get.mockImplementationOnce(() =>
         Promise.reject(new Error("Erreur 404"))
       );
 
@@ -215,7 +215,7 @@ describe("Given I am connected as an employee", () => {
     });
 
     test("Then add a new bills, if API fails with 500 message error", async () => {
-      firebase.get.mockImplementationOnce(() =>
+      store.get.mockImplementationOnce(() =>
         Promise.reject(new Error("Erreur 500"))
       );
 

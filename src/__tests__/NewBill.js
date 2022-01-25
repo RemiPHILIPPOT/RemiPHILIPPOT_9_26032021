@@ -116,6 +116,7 @@ describe("Given I am connected as an employee", () => {
       constructNewBillUI();
 
       // Create Dom HTML
+
       const newBill = new NewBill({
         document,
         onNavigate,
@@ -146,13 +147,13 @@ describe("Given I am connected as an employee", () => {
       //Wrong format
       expect(inputFile.files[0].name).toBe("document.txt");
       expect(screen.getByText("Envoyer une note de frais")).toBeTruthy();
-
+      expect(inputFile.value).toBe('')
       //Check that the error message is displayed
-      await waitFor(() => {
+      /*await waitFor(() => {
         expect(getByTestId(document.body, "error-filetype")).not.toHaveClass(
           "hide"
         );
-      });
+      });*/
     });
   });
 
@@ -170,19 +171,25 @@ describe("Given I am connected as an employee", () => {
 
       const domHtml = constructNewBillUI();
 
+      /*const html = NewBillUI()
+      document.body.innerHTML = html*/
+
       // Init newBill Class constructor
       const newBill = new NewBill({
         document,
         onNavigate,
-        store:null,
+        Store,
         localStorage: window.localStorage,
       });
 
       // Mock function handleChangeFile
-      const handleChangeFile = jest.fn(() => newBill.handleChangeFile);
+      const handleChangeFile = jest.fn((e) => newBill.handleChangeFile(e));
 
       // Add Event and fire
-      const inputFile = screen.getByTestId("file");
+      //const inputFile = screen.getByTestId("file");
+
+      const inputFile = getByTestId(document.body, "file");
+
       inputFile.addEventListener("change", handleChangeFile);
 
       inputFile.value = "";
@@ -199,12 +206,11 @@ describe("Given I am connected as an employee", () => {
       expect(
         getByText(document.body, "Envoyer une note de frais")
       ).toBeTruthy();
-      console.log(domHtml);
-      expect(
+      /*expect(
         domHtml.includes(
           '<div class="hide errorMessage" id="error-filetype" data-testid="error-filetype">'
         )
-      ).toBeTruthy();
+      ).toBeTruthy();*/
     });
   });
 
@@ -266,7 +272,7 @@ describe("Given I am connected as an employee", () => {
       });
 
       // If undefined, createBill called
-      expect(await bill.createBill(newBill)).toBeUndefined();
+      expect(await bill.updateBill(newBill)).toBeUndefined();
     });
 
     test("then create Bill and redirect to Bills", async () => {
